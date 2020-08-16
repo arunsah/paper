@@ -10,6 +10,140 @@
     <title>virtual-DOM v01</title>
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <div
+      id="mydiv"
+      tabindex="2"
+      style="
+        border: 1px solid red;
+        
+        height: 40%;
+        outline: thick;
+        margin: 5px;
+        padding: 5px;
+        background-color: rgb(238, 238, 238);
+      "
+      contentEditable="true"
+      
+    >
+      <p>
+        Hi <b> Ravi</b>. <i>how are <b>you</b></i
+        >.
+      </p>
+    </div>
+
+    <div
+      id="mydiv2"
+      tabindex="1"
+      style="
+        border: 1px solid red;
+        height: 40%;
+        outline: thick;
+        margin: 5px;
+        padding: 5px;
+        background-color: rgb(238, 238, 238);
+      "
+    >
+      hello
+    </div>
   </body>
 </html>
+<script>
+
+    var doc = document.querySelector('[contentEditable]');
+    doc.addEventListener('paste', function(e){
+        e.preventDefault();
+        var text = e.clipboardData.getData('text/plain');
+        console.log(text);
+        document.execCommand('insertText', false, text);
+    });
+
+  $(document).ready(function () {
+
+  
+    // $(function () {
+    //   $("#mydiv").focus();
+    // });
+
+    // $("#mydiv").on("keydown", function (event) {
+    //   //console.log(event.keyCode);
+    //   switch (
+    //     event.keyCode
+    //     //....your actions for the keys .....
+    //   ) {
+    //   }
+    // //   console.log(event.keyCode);
+    // //   var html =  $("#mydiv").html();
+    // //   $("#mydiv").html( html + String.fromCharCode(which));
+    // });
+
+    // $("#mydiv").keypress(function (event) {
+    //   var el = $("#mydiv");
+    //   var html = el.html();
+    //   el.html(html + String.fromCharCode(event.which));
+    //   allDescendants(el);
+
+    //   Array.prototype.forEach.call(document.querySelectorAll("#mydiv"), function (
+    //     node
+    //   ) {
+    //     doSomethingToNode(node);
+    //   });
+    // });
+
+    // $("#mydiv2").keypress(function (event) {
+    //   var el = $("#mydiv2");
+    //   var html = el.html();
+    //   el.html(html + String.fromCharCode(event.which));
+    //   allDescendants(el);
+    // });
+
+
+    // https://stackoverflow.com/questions/53186433/restrict-paste-in-contenteditable-html-js
+
+
+    //end
+  });
+
+  // https://stackoverflow.com/questions/2712136/how-do-i-make-this-loop-all-children-recursively
+  function allDescendants(node) {
+    if (!node.childNodes) {
+      return;
+    }
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var child = node.childNodes[i];
+      allDescendants(child);
+      doSomethingToNode(child);
+    }
+  }
+
+  function doSomethingToNode(child) {
+    console.log(child);
+  }
+
+  function vNode(type, props, ...children) {
+    return { type, props, children };
+  }
+
+  var root = vNode(
+    "ul",
+    { class: "list" },
+    vNode("li", {}, "one"),
+    vNode("li", {}, "two"),
+    vNode("li", {}, "three"),
+    vNode("li", {}, "four"),
+    vNode("li", {}, "five")
+  );
+
+  const a = `
+<ul className="list">
+    <li>one</li>
+    <li>two</li>
+    <li>three</li>
+    <li>four</li>
+    <li>five</li>
+</ul>
+  `;
+
+  console.log(a);
+
+  console.log(root);
+</script>
