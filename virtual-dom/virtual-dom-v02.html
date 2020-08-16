@@ -46,9 +46,33 @@
     this.data = !data ? {} : data;
   }
 
-  Node.prototype.findChildNodeById = function (nodeId) {
+  Node.prototype.findChildByIndex = function (index) {
+    if (!this.children[index]) {
+      // un-trusted, undefined
+      return null;
+    }
+    return this.children[index];
+  };
+
+  Node.prototype.firstChild = function () {
+    if (!this.children[0]) {
+      // un-trusted, undefined
+      return null;
+    }
+    return this.children[0];
+  };
+
+  Node.prototype.lastChild = function () {
+    if (!this.children[this.children.length-1]) {
+      // un-trusted, undefined
+      return null;
+    }
+    return this.children[this.children.length-1];
+  };
+
+  Node.prototype.findChildIndexById = function (nodeId) {
     for (var i = 0, length = this.children.length; i < length; i++) {
-      if ((this.children[i].id = nodeId)) {
+      if (this.children[i].id == nodeId) {
         return i;
       }
     }
@@ -139,7 +163,7 @@
     this.contains(callback, traverse);
 
     if (parent) {
-      childIndexInParent = parent.findChildNodeById(nodeId);
+      childIndexInParent = parent.findChildIndexById(nodeId);
       if (!childIndexInParent) {
         throw new Error("node to remove does not exists.");
       }
@@ -149,6 +173,51 @@
     }
 
     return childToRemove;
+  };
+
+  Tree.prototype.findNodeById = function (nodeId) {// TODO: map can be used for fast access, (parentId + nodeId)
+    var queue = new Queue();
+    queue.enqueue(this.root);
+    var node = queue.dequeue();
+    while (node) {
+      if (node.id == nodeId) {
+        return node;
+      }
+
+      // add all child to queue
+      for (var i = 0, length = node.children.length; i < length; i++) {
+        queue.enqueue(node.children[i]);
+      }
+
+      // callback(node);
+      node = queue.dequeue();
+    }
+
+    return null;
+  };
+
+  Tree.prototype.findPreviousSibling = function (nodeId) {
+    var node = this.findNodeById(nodeId);
+    if (!node) {
+      console.log("Element not found with id", nodeId);
+      return null;
+    }
+    var parent = node.parent;
+    var nodeIndex = parent.findChildIndexById(nodeId);
+    // previous sibling
+    return parent.findChildByIndex(nodeIndex - 1);
+  };
+
+  Tree.prototype.findNextSibling = function (nodeId) {
+    var node = this.findNodeById(nodeId);
+    if (!node) {
+      console.log("Element not found with id", nodeId);
+      return null;
+    }
+    var parent = node.parent;
+    var nodeIndex = parent.findChildIndexById(nodeId);
+    // next sibling
+    return parent.findChildByIndex(nodeIndex + 1);
   };
 
   function Queue() {
